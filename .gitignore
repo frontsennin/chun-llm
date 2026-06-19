@@ -9,7 +9,8 @@ env/
 # Environment
 .env
 
-# Vector store local (Qdrant usa :memory: — sem arquivos gerados)
+# Memórias pessoais (geradas em runtime, não vão pro repo)
+backend/memories/
 
 # Node
 node_modules/

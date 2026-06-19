@@ -37,6 +37,19 @@ async def chat(req: ChatRequest):
     return EventSourceResponse(generate())
 
 
+@app.get("/memories")
+async def get_memories():
+    return {"memories": chun.memory.all()}
+
+
+@app.delete("/memories")
+async def clear_memories():
+    chun.memory.memories = []
+    chun.memory._save()
+    chun.memory._rebuild_index()
+    return {"status": "ok"}
+
+
 @app.post("/reindex")
 async def reindex():
     count = chun.reindex()
@@ -45,4 +58,8 @@ async def reindex():
 
 @app.get("/health")
 async def health():
-    return {"status": "online", "chunks_indexed": len(chun.chunks)}
+    return {
+        "status": "online",
+        "chunks_indexed": len(chun.chunks),
+        "memories": len(chun.memory.memories),
+    }

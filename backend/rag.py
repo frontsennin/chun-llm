@@ -7,6 +7,7 @@ import httpx
 from dotenv import load_dotenv
 from rank_bm25 import BM25Okapi
 
+from memory_store import MemoryStore
 from personality import build_system_prompt, detect_mode
 
 load_dotenv()
@@ -26,6 +27,7 @@ class ChunRAG:
         self.api_key = os.getenv("GEMINI_API_KEY")
         self.chunks: list[dict] = []
         self.bm25: BM25Okapi | None = None
+        self.memory = MemoryStore(api_key=self.api_key)
         self._index_knowledge()
 
     # ── Indexing ──────────────────────────────────────────────────────────────
@@ -57,21 +59,33 @@ class ChunRAG:
         self._index_knowledge()
         return len(self.chunks)
 
-    # ── Retrieval (BM25) ──────────────────────────────────────────────────────
+    # ── Retrieval ─────────────────────────────────────────────────────────────
 
-    def _retrieve(self, query: str, n: int = 4) -> list[str]:
+    def _retrieve_knowledge(self, query: str, n: int = 4) -> list[str]:
         if not self.bm25 or not self.chunks:
             return []
         scores = self.bm25.get_scores(query.lower().split())
         top = sorted(range(len(scores)), key=lambda i: scores[i], reverse=True)[:n]
         return [self.chunks[i]["text"] for i in top if scores[i] > 0]
 
-    # ── Generation (REST direto, sem SDK) ─────────────────────────────────────
+    def _build_context(self, query: str) -> str:
+        knowledge = self._retrieve_knowledge(query)
+        memories = self.memory.retrieve(query)
+
+        parts = []
+        if knowledge:
+            parts.append("## Conhecimento sobre o Nicolas\n" + "\n\n".join(knowledge))
+        if memories:
+            bullet_memories = "\n".join(f"- {m}" for m in memories)
+            parts.append(f"## Memórias das nossas conversas\n{bullet_memories}")
+
+        return "\n\n".join(parts)
+
+    # ── Generation (streaming REST) ───────────────────────────────────────────
 
     async def stream_response(self, message: str, history: list[dict]):
         mode = detect_mode(message)
-        context_docs = await asyncio.to_thread(self._retrieve, message)
-        context = "\n\n---\n\n".join(context_docs)
+        context = await asyncio.to_thread(self._build_context, message)
         system_prompt = build_system_prompt(mode, context)
 
         contents = []
@@ -84,6 +98,8 @@ class ChunRAG:
             "systemInstruction": {"parts": [{"text": system_prompt}]},
             "generationConfig": {"temperature": 0.9, "maxOutputTokens": 800},
         }
+
+        full_response = ""
 
         async with httpx.AsyncClient(timeout=60.0) as client:
             async with client.stream(
@@ -108,6 +124,14 @@ class ChunRAG:
                         for candidate in data.get("candidates", []):
                             for part in candidate.get("content", {}).get("parts", []):
                                 if "text" in part:
+                                    full_response += part["text"]
                                     yield part["text"]
                     except json.JSONDecodeError:
                         continue
+
+        # Extrai e salva memórias sem bloquear nem crashar
+        if full_response:
+            print(f"[RAG] Agendando extração de memória ({len(full_response)} chars)")
+            asyncio.create_task(
+                self.memory.extract_and_save(message, full_response)
+            )

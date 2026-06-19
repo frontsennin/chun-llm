@@ -6,7 +6,7 @@ import { InputBar } from './components/InputBar'
 import { MemoryPanel, type Memory } from './components/MemoryPanel'
 import styles from './App.module.css'
 
-const API = 'http://localhost:8000'
+const API = import.meta.env.VITE_API_URL ?? 'http://localhost:8000'
 
 export default function App() {
   const { messages, sendMessage, isStreaming, clearHistory } = useChat()

@@ -6,7 +6,7 @@ export interface Message {
   image?: string  // base64 data URL — só em mensagens do usuário
 }
 
-const API_URL = 'http://localhost:8000'
+const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8000'
 
 export function useChat() {
   const [messages, setMessages] = useState<Message[]>([])

@@ -1,0 +1,68 @@
+:root {
+  --bg-primary: #07070f;
+  --bg-secondary: #0f0f1a;
+  --bg-surface: #151525;
+  --bg-surface-hover: #1c1c30;
+
+  --purple: #7c3aed;
+  --purple-light: #a78bfa;
+  --purple-glow: rgba(124, 58, 237, 0.35);
+
+  --pink: #ec4899;
+  --pink-light: #f0abfc;
+  --pink-glow: rgba(236, 72, 153, 0.35);
+
+  --text-primary: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --text-chun: #f0abfc;
+
+  --border-subtle: rgba(124, 58, 237, 0.2);
+  --border-active: rgba(124, 58, 237, 0.5);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* grade cyberpunk de fundo */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(124, 58, 237, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124, 58, 237, 0.04) 1px, transparent 1px);
+  background-size: 44px 44px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+#root {
+  position: relative;
+  z-index: 1;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* scrollbar customizada */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--purple);
+  border-radius: 2px;
+}

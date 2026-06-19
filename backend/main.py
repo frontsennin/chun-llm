@@ -1,4 +1,5 @@
 import json
+import os
 
 from dotenv import load_dotenv
 from fastapi import FastAPI
@@ -12,9 +13,15 @@ from rag import ChunRAG
 
 app = FastAPI(title="Chun API")
 
+ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://localhost:4173",
+    os.getenv("FRONTEND_URL", ""),  # URL do Vercel em produção
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=[o for o in ALLOWED_ORIGINS if o],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

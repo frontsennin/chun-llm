@@ -2,10 +2,19 @@ import { useState, useCallback, useRef, useEffect } from 'react'
 
 function pickVoice(): SpeechSynthesisVoice | null {
   const voices = window.speechSynthesis.getVoices()
+  const ptBR = voices.filter(v => v.lang === 'pt-BR' || v.lang === 'pt_BR')
+  const pt   = voices.filter(v => v.lang.startsWith('pt'))
+
+  const isFemale = (v: SpeechSynthesisVoice) =>
+    /female|feminino|maria|francisca|vitoria|heloisa/i.test(v.name)
+  const isMale = (v: SpeechSynthesisVoice) =>
+    /male|masculino|daniel|ricardo|antonio/i.test(v.name)
+
   return (
-    voices.find(v => v.lang === 'pt-BR' && /female|feminino/i.test(v.name)) ??
-    voices.find(v => v.lang === 'pt-BR') ??
-    voices.find(v => v.lang.startsWith('pt')) ??
+    ptBR.find(isFemale) ??
+    pt.find(isFemale) ??
+    ptBR.find(v => !isMale(v)) ??
+    ptBR[0] ??
     null
   )
 }

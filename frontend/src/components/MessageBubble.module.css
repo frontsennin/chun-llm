@@ -61,6 +61,16 @@
   white-space: pre-wrap;
 }
 
+.messageImage {
+  display: block;
+  max-width: 240px;
+  max-height: 200px;
+  border-radius: 10px;
+  object-fit: cover;
+  margin-bottom: 8px;
+  border: 1px solid var(--border-active);
+}
+
 /* Glitch tags como *[sistema aquecendo]* */
 .glitchTag {
   color: var(--pink-light);

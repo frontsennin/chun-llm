@@ -3,6 +3,7 @@ import { useState, useCallback } from 'react'
 export interface Message {
   role: 'user' | 'model'
   content: string
+  image?: string  // base64 data URL — só em mensagens do usuário
 }
 
 const API_URL = 'http://localhost:8000'
@@ -11,10 +12,10 @@ export function useChat() {
   const [messages, setMessages] = useState<Message[]>([])
   const [isStreaming, setIsStreaming] = useState(false)
 
-  const sendMessage = useCallback(async (text: string) => {
+  const sendMessage = useCallback(async (text: string, image?: string) => {
     if (isStreaming) return
 
-    const userMessage: Message = { role: 'user', content: text }
+    const userMessage: Message = { role: 'user', content: text, image }
     const updatedHistory = [...messages, userMessage]
 
     setMessages([...updatedHistory, { role: 'model', content: '' }])
@@ -27,6 +28,7 @@ export function useChat() {
         body: JSON.stringify({
           message: text,
           history: messages.map(m => ({ role: m.role, content: m.content })),
+          image: image ?? null,
         }),
       })
 
@@ -63,7 +65,7 @@ export function useChat() {
           }
         }
       }
-    } catch (err) {
+    } catch {
       setMessages(prev => {
         const copy = [...prev]
         copy[copy.length - 1] = {

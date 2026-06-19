@@ -73,6 +73,68 @@
   box-shadow: none;
 }
 
+.hasImage {
+  border-color: var(--purple);
+  box-shadow: 0 0 16px var(--purple-glow);
+}
+
+/* Botão de anexo */
+.attachBtn {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  border: 1px solid var(--border-subtle);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s, color 0.2s;
+  margin-bottom: 2px;
+}
+
+.attachBtn:hover:not(:disabled) {
+  border-color: var(--purple-light);
+  color: var(--purple-light);
+}
+
+/* Preview da imagem */
+.imagePreview {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+.previewImg {
+  height: 80px;
+  max-width: 200px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1px solid var(--purple);
+  box-shadow: 0 0 12px var(--purple-glow);
+}
+
+.removeImage {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: none;
+  background: var(--pink);
+  color: white;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
 .hint {
   margin-top: 8px;
   font-size: 0.7rem;

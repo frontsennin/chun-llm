@@ -32,6 +32,9 @@ export function MessageBubble({ message, isStreaming }: Props) {
       )}
 
       <div className={`${styles.bubble} ${isChun ? styles.chunBubble : styles.userBubble}`}>
+        {message.image && (
+          <img src={message.image} alt="imagem enviada" className={styles.messageImage} />
+        )}
         {isChun ? (
           <p className={styles.text}>
             {parseGlitchText(message.content)}
@@ -45,7 +48,7 @@ export function MessageBubble({ message, isStreaming }: Props) {
             )}
           </p>
         ) : (
-          <p className={styles.text}>{message.content}</p>
+          message.content && <p className={styles.text}>{message.content}</p>
         )}
       </div>
     </div>

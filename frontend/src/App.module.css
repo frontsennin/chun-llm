@@ -58,6 +58,69 @@
 .headerRight {
   display: flex;
   align-items: center;
+  gap: 8px;
+}
+
+/* Botão de memórias */
+.memoryBtn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.72rem;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.5px;
+}
+
+.memoryBtn:hover {
+  border-color: var(--purple-light);
+  color: var(--purple-light);
+  box-shadow: 0 0 8px var(--purple-glow);
+}
+
+/* Botão de voz */
+.voiceBtn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.72rem;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.voiceBtn:hover {
+  border-color: var(--purple-light);
+  color: var(--purple-light);
+}
+
+.voiceBtnOn {
+  border-color: var(--purple);
+  color: var(--purple-light);
+  box-shadow: 0 0 8px var(--purple-glow);
+}
+
+.voiceBtnSpeaking {
+  border-color: var(--pink);
+  color: var(--pink-light);
+  box-shadow: 0 0 12px var(--pink-glow);
+  animation: speakPulse 1s ease-in-out infinite;
+}
+
+@keyframes speakPulse {
+  0%, 100% { box-shadow: 0 0 8px var(--pink-glow); }
+  50% { box-shadow: 0 0 20px var(--pink-glow), 0 0 6px var(--pink); }
 }
 
 .clearBtn {

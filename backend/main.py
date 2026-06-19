@@ -26,12 +26,13 @@ chun = ChunRAG()
 class ChatRequest(BaseModel):
     message: str
     history: list[dict] = []
+    image: str | None = None  # base64 data URL
 
 
 @app.post("/chat")
 async def chat(req: ChatRequest):
     async def generate():
-        async for chunk in chun.stream_response(req.message, req.history):
+        async for chunk in chun.stream_response(req.message, req.history, req.image):
             yield {"data": json.dumps(chunk)}
 
     return EventSourceResponse(generate())
@@ -41,6 +42,16 @@ async def chat(req: ChatRequest):
 async def get_memories():
     return {"memories": chun.memory.all()}
 
+
+@app.delete("/memories/{index}")
+async def delete_memory(index: int):
+    actual = len(chun.memory.memories) - 1 - index
+    if 0 <= actual < len(chun.memory.memories):
+        chun.memory.memories.pop(actual)
+        chun.memory._save()
+        chun.memory._rebuild_index()
+        return {"status": "ok"}
+    return {"status": "not found"}
 
 @app.delete("/memories")
 async def clear_memories():
